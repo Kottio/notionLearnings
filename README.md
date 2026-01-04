@@ -17,40 +17,49 @@ Pipeline ETL complète pour extraire des données depuis Notion, les stocker dan
 
 ---
 
-## ⚙️ Prérequis
+### Lancer Metabase avec Docker
 
-- Python 3.8+
-- Docker
-- Compte Notion avec accès API
-- Git
+```bash
+docker run -d -p 3000:3000\
+-v metabase-data:/metabase-data \
+-v /[your_project_path]:/notion_project\
+-e "MB_DB_FILE"=/metabase-data/metabase.db\
+--name metabase\
+metabase/metabase
+```
 
----
+Accède à Metabase : [http://localhost:3000](http://localhost:3000)
 
 ## 🚀 Installation
 
 ### 1. Cloner le projet
+
 ```bash
 git clone https://github.com/TON_USERNAME/notionLearnings.git
 cd notionLearnings
 ```
 
 ### 2. Créer l'environnement virtuel
+
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # Sur Windows: venv\Scripts\activate
 ```
 
 ### 3. Installer les dépendances
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 4. Configurer les variables d'environnement
+
 ```bash
 cp .env.example .env
 ```
 
 Édite `.env` avec tes identifiants :
+
 - **NOTION_TOKEN** : Crée une intégration sur [Notion Developers](https://www.notion.so/my-integrations)
 - **DATA_SOURCE_ID** : ID de ta base de données Notion (voir vidéo YouTube)
 
@@ -59,27 +68,12 @@ cp .env.example .env
 ## 📊 Utilisation
 
 ### Extraction manuelle
+
 ```bash
 python extraction.py
 ```
 
 Les données sont sauvegardées dans `notion.db`.
-
-### Lancer Metabase avec Docker
-```bash
-docker run -d -p 3000:3000 \
-  -v $(pwd)/notion.db:/metabase-data/notion.db \
-  --name metabase \
-  metabase/metabase
-```
-
-Accède à Metabase : [http://localhost:3000](http://localhost:3000)
-
-**Configuration Metabase :**
-1. Créer un compte admin
-2. Ajouter une base de données SQLite
-3. Chemin : `/metabase-data/notion.db`
-4. Créer ton dashboard
 
 ---
 
@@ -92,6 +86,7 @@ crontab -e
 ```
 
 Ajoute cette ligne (exécution toutes les heures) :
+
 ```bash
 0 * * * * /chemin/vers/notionLearnings/run_extraction.sh
 ```
@@ -114,21 +109,6 @@ notionLearnings/
     ├── Exploration.ipynb              # Exploration des données
     └── datasourceExploration.ipynb    # Découverte API
 ```
-
----
-
-## 🛠️ Schéma des données
-
-La table `learnings` contient :
-- `date_started` : Date de début
-- `subject` : Sujet (Business, Tech, Musique, etc.)
-- `priority` : Priorité (High, Medium, Low)
-- `source` : Source (Book, YouTube, Udemy)
-- `scope` : Ampleur (Quick Win, Medium, Long, Epic)
-- `status` : Statut (In Progress, Completed, Not Started)
-- `url` : Lien vers la ressource
-- `topic` : Thème général
-- `title` : Nom de la ressource
 
 ---
 
